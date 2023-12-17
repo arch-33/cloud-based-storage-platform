@@ -1,59 +1,60 @@
-import { useEffect, FormEventHandler } from 'react';
+import { FormEventHandler, ReactNode, useEffect, useState } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import { Head, useForm } from '@inertiajs/react';
+import { Button, CardBody, Input } from "@nextui-org/react";
+import { EyeIcon, EyeSlashIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 
-export default function ConfirmPassword() {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        password: '',
-    });
+const ConfirmPassword = () => {
+	const { data, setData, post, processing, errors, reset } = useForm({
+		password: '',
+	});
+	const [isPwdVisible, setIsPwdVisible] = useState(false);
+	useEffect(() => {
+		return () => {
+			reset('password');
+		};
+	}, []);
+	const togglePwdVisibility = () => setIsPwdVisible(!isPwdVisible);
+	const submit: FormEventHandler = (e) => {
+		e.preventDefault();
+		post(route('password.confirm'));
+	};
 
-    useEffect(() => {
-        return () => {
-            reset('password');
-        };
-    }, []);
+	return (
+		<GuestLayout title={"Confirm Password"}>
+			<Head title="Confirm Password" />
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+			<CardBody className={"mt-4"}>
+				<form className='flex flex-col gap-4' onSubmit={submit}>
+					<Input
+						label="Password"
+						placeholder="Enter your password"
+						size='md'
+						labelPlacement='outside'
+						startContent={<LockClosedIcon className="flex-shrink-0 w-6 h-6 text-2xl pointer-events-none text-default-400" />}
+						endContent={<button className="focus:outline-none" type="button" onClick={togglePwdVisibility}>
+							{isPwdVisible ? (<EyeSlashIcon className="w-5 h-5 text-2xl pointer-events-none text-default-400" />) : (<EyeIcon className="w-5 h-5 text-2xl pointer-events-none text-default-400" />)}
+						</button>}
+						type={isPwdVisible ? "text" : "password"}
+						isInvalid={!!errors.password}
+						errorMessage={errors.password || ""}
+						value={data.password}
+						autoComplete="current-password"
+						onChange={(e) => setData('password', e.target.value)}
+					/>
 
-        post(route('password.confirm'));
-    };
+					<div className="flex items-center justify-end mt-4">
+						<Button className="font-semibold ms-4" disabled={processing} color='primary' variant='shadow' size='lg' type='submit'>
+							Confirm
+						</Button>
+					</div>
+				</form>
+			</CardBody>
 
-    return (
-        <GuestLayout>
-            <Head title="Confirm Password" />
-
-            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                This is a secure area of the application. Please confirm your password before continuing.
-            </div>
-
-            <form onSubmit={submit}>
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Confirm
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
+		</GuestLayout>
+	);
 }
+
+ConfirmPassword.layout = (page: ReactNode) => <GuestLayout title={"Confirm Password"}>{page}</GuestLayout>;
+
+export default ConfirmPassword;
