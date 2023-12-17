@@ -25,55 +25,56 @@ use PHPUnit\Framework\Attributes\Group;
 /*Home
 if not authentecated return welcome page else redirect to my-drive
 */
-
 Route::get('/', HomeController::class);
-Route::middleware(["auth", "verified"])
-	->get('/init/', function () {
-
-		$user = Auth::user();
-
-		$root_folder = File::where("name", $user->email)->first();
-
-		// create 5 files in root folder
-		for ($i = 0; $i < 2; $i++) {
-			$root_folder->children()->create([
-				"name" => "file " . $i,
-				"is_folder" => 0,
-			]);
-
-			// File::create([
-			// 	"name" => "file " . $i,
-			// 	"is_folder" => 0,
-			// ], $root_folder);
 
 
-			// $file = new File();
-			// $file->name = "file " . $i;
-			// $file->is_folder = 0;
-			// $file->appendToNode($root_folder);
-			// $file->save();
-			echo "saeved : " . ($i + 1) . "\n";
-		}
+// Route::middleware(["auth", "verified"])
+// 	->get('/init/', function () {
 
-		echo $root_folder->id;
-	});
+// 		$user = Auth::user();
+
+// 		$root_folder = File::where("name", $user->email)->first();
+
+// 		// create 5 files in root folder
+// 		for ($i = 0; $i < 2; $i++) {
+// 			$root_folder->children()->create([
+// 				"name" => "file " . $i,
+// 				"is_folder" => 0,
+// 			]);
+
+// 			// File::create([
+// 			// 	"name" => "file " . $i,
+// 			// 	"is_folder" => 0,
+// 			// ], $root_folder);
+
+
+// 			// $file = new File();
+// 			// $file->name = "file " . $i;
+// 			// $file->is_folder = 0;
+// 			// $file->appendToNode($root_folder);
+// 			// $file->save();
+// 			echo "saeved : " . ($i + 1) . "\n";
+// 		}
+
+// 		echo $root_folder->id;
+// 	});
 
 // my-drive 
-Route::controller(FoldersController::class)
-	->middleware(["auth", "verified"])
-	->prefix("my-drive")
-	->group(function () {
-		Route::get('/', "myDrive")->name('my-drive');
-		Route::get('/folders/{folder}', "folders")->name('folders.show');
-	});
+// Route::controller(FoldersController::class)
+// 	->middleware(["auth", "verified"])
+// 	->prefix("my-drive")
+// 	->group(function () {
+// 		Route::get('/', "myDrive")->name('my-drive');
+// 		Route::get('/folders/{folder}', "folders")->name('folders.show');
+// 	});
 
-Route::controller(FoldersController::class)
-	->middleware(["auth", "verified"])
-	->prefix("my-drive")
-	->group(function () {
-		Route::get('/', "myDrive")->name('my-drive');
-		Route::get('/folers/{folder}', "folders")->name('folders.show');
-	});
+// Route::controller(FoldersController::class)
+// 	->middleware(["auth", "verified"])
+// 	->prefix("my-drive")
+// 	->group(function () {
+// 		Route::get('/', "myDrive")->name('my-drive');
+// 		Route::get('/folers/{folder}', "folders")->name('folders.show');
+// 	});
 
 // // get root folder
 // $folder = File::query()->whereIsRoot()->where('created_by', Auth::id())->firstOrFail();
