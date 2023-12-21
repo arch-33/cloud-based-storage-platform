@@ -4,11 +4,14 @@ import { PropsWithChildren } from "react";
 import NavigationBar from "@/Components/NavigationBar";
 import SideBar from "@/Components/SideBar";
 import ThemeSwitcher from "@/Components/ThemeSwitcher";
+import clsx from "clsx";
+import { usePage } from "@inertiajs/react";
 
 type PropsType = PropsWithChildren & {}
 
 export default function AuthenticatedLayout({ children }: PropsType) {
-	
+
+	const { user } = usePage().props.auth;
 	return (
 		<div className="flex flex-col h-screen min-h-screen bg-center dark:bg-gray-900 bg-dots-darker dark:bg-dots-lighter">
 
@@ -35,9 +38,12 @@ export default function AuthenticatedLayout({ children }: PropsType) {
 			</NavigationBar>
 
 			<div className="flex flex-row flex-1 overflow-y-hidden">
-				<main className="flex-1 py-6 overflow-y-auto bg-gray-100 bg-center dark:bg-gray-900">{children}</main>
 
-				<SideBar />
+				<main className={clsx("flex-1  py-6 overflow-y-auto bg-gray-100 bg-center  dark:bg-gray-900", { "px-0 md:px-32": !user })}>
+					{children}
+				</main>
+
+				{user && <SideBar />}
 
 			</div>
 

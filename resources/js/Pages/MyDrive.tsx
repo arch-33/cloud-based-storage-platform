@@ -1,34 +1,44 @@
 import FilesTable from "@/Components/FilesTable";
-import FilesTables from "@/Components/FilesTable";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import useCurrentFolderStore from "@/Store/currentFolderStore";
 import { PageProps } from "@/types";
-import { Link } from "@inertiajs/react";
-import { BreadcrumbItem, Breadcrumbs, Button, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 
 type PropsType = PageProps & {
-	folder: Object, 
-	breadcrumbs: Object,
+	folder: any,
+	descendants: {
+		[name: string]: any,
+		meta: { [name: string]: any, links: any[] }
+	},
+	ancenstors: any[],
 }
 
-export default function MyDrive({ folder, breadcrumbs }: PropsType) {
+const MyDrive = ({ folder, descendants, ancenstors }: PropsType) => {
+	const { setBaseUrl, setFolderId } = useCurrentFolderStore();
 
-	
+	useEffect(() => {
+		setBaseUrl("/my-drive/")
+		setFolderId(folder.data.uuid)
+
+		return () => {
+			setBaseUrl("")
+			setFolderId("")
+		}
+	}, [])
+
 	return (
-		<AuthenticatedLayout>
+		<div className="flex flex-col gap-8 px-4 pt-6">
 
-			<div className="flex flex-col gap-8 px-4 pt-6">
-				<Breadcrumbs
+			<FilesTable
+				folder={folder}
+				descendants={descendants}
+				ancenstors={ancenstors}
+				base_url="/my-drive"
+			/>
 
-					separator="/" maxItems={3} size="lg" itemsBeforeCollapse={1} itemsAfterCollapse={2}
-					itemClasses={{ item: "text-2xl px-4", separator: "px-4 text-2xl", }}
-				>
-					<BreadcrumbItem><Link href="/my-drive">My Drive</Link></BreadcrumbItem>
-				</Breadcrumbs>
-
-				{"<FilesTable/>"}
-			</div>
-		</AuthenticatedLayout>
+		</div>
 	)
 }
+MyDrive.layout = page => <AuthenticatedLayout children={page} />;
+export default MyDrive;

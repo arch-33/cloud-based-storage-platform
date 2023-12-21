@@ -1,11 +1,12 @@
-import { TrashIcon } from "@heroicons/react/24/outline"
+import { MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline"
 import PlusIcon from "@heroicons/react/24/outline/esm/PlusIcon"
 import { Link, usePage } from "@inertiajs/react"
-import { Button, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react"
+import { Button, Checkbox, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
 import clsx from "clsx"
 import { ReactNode } from "react"
 import { FiHardDrive } from "react-icons/fi"
 import { RiFileUploadLine, RiFolderAddLine, RiFolderUploadLine, RiGroupLine } from "react-icons/ri"
+import CreateFolder from "./FilesTable/CreateFolder"
 
 type PropsType = {}
 
@@ -77,7 +78,7 @@ function SideBarItem({ className = "", title, icon, path, isActive }: SideBarIte
                 className={clsx([
                     "relative m-2 py-3 pl-5 flex items-center rounded-xl cursor-pointer hover:bg-gray-50 ",
                     "text-sm text-gray-500 font-semibold",
-                    { "bg-gray-50 border-b-4 border-gray-300": isActive }, 
+                    { "bg-gray-50 border-b-4 border-gray-300": isActive },
                     className
                 ])}
             >
@@ -88,35 +89,50 @@ function SideBarItem({ className = "", title, icon, path, isActive }: SideBarIte
 }
 
 function DropdownCreateNew({ }) {
+    const  disclosure = useDisclosure();
+
 
     const dropDownIconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
     return (
-        <Dropdown
-            backdrop="opaque"
-            showArrow
-            classNames={{
-                base: "before:bg-default-200", // change arrow background
-                content: "py-1 px-1 border border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black",
-            }}
-        >
-            <DropdownTrigger>
-                <Button fullWidth size="md" color="primary" variant="shadow" className="relative font-sans font-semibold capitalize" startContent={<PlusIcon className="absolute left-0 w-6 h-6 ml-4" />}>
-                    New
-                </Button>
-            </DropdownTrigger>
+        <>
+            <Dropdown
+                backdrop="opaque"
+                showArrow
+                classNames={{
+                    base: "before:bg-default-200", // change arrow background
+                    content: "py-1 px-1 border border-default-200 bg-gradient-to-br from-white to-default-200 dark:from-default-50 dark:to-black",
+                }}
+            >
+                <DropdownTrigger>
+                    <Button
+                        fullWidth
+                        size="md"
+                        color="primary"
+                        variant="shadow"
+                        className="relative font-sans font-semibold capitalize"
+                        startContent={<PlusIcon className="absolute left-0 w-6 h-6 ml-4" />}
+                    >
+                        New
+                    </Button>
+                </DropdownTrigger>
 
-            <DropdownMenu variant="faded">
-                <DropdownItem key="new" showDivider startContent={<RiFolderAddLine className={dropDownIconClasses} />}>
-                    New Folder
-                </DropdownItem>
-                <DropdownItem key="upload-file" startContent={<RiFileUploadLine className={dropDownIconClasses} />}>
-                    Upload file
-                </DropdownItem>
-                <DropdownItem key="upload-folder" startContent={<RiFolderUploadLine className={dropDownIconClasses} />}>
-                    Upload folder
-                </DropdownItem>
-            </DropdownMenu>
-        </Dropdown>
+                <DropdownMenu variant="faded">
+                    <DropdownItem key="new" showDivider startContent={<RiFolderAddLine className={dropDownIconClasses} />} onPress={()=>disclosure.onOpen()}>
+                        New Folder
+                    </DropdownItem>
+                    <DropdownItem key="upload-file" startContent={<RiFileUploadLine className={dropDownIconClasses} />}>
+                        Upload file
+                    </DropdownItem>
+                    <DropdownItem key="upload-folder" startContent={<RiFolderUploadLine className={dropDownIconClasses} />}>
+                        Upload folder
+                    </DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+            {/* create new folder modal  */}
+            <CreateFolder
+                disclosure={disclosure}
+            />
+        </>
     )
 }

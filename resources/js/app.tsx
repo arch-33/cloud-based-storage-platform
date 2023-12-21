@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { NextUIProvider } from '@nextui-org/react';
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { Toaster } from 'react-hot-toast';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -21,6 +22,7 @@ createInertiaApp({
                 <NextUIProvider>
                     <NextThemesProvider attribute="class" defaultTheme="light">
                         <App {...props} />
+                        <Toaster/>
                     </NextThemesProvider>
                 </NextUIProvider>
             </StrictMode>
