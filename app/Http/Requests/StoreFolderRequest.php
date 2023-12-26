@@ -20,10 +20,16 @@ class StoreFolderRequest extends StoreFileRequest {
     public function rules(): array {
         return array_merge(
             parent::rules(),
-            ["name" => [
-                'required',
-                Rule::unique(File::class, 'name')->where('created_by', Auth::id())->where('parent_id', $this->parent->id)->whereNull('deleted_at')
-            ]]
+            [
+                "name" => [
+                    'required',
+                    Rule::unique(File::class, 'name')
+                        ->where('is_folder', 1)
+                        ->where('created_by', Auth::id())
+                        ->where('parent_id', $this->parent->id)
+                        ->whereNull('deleted_at')
+                ]
+            ]
         );
     }
 

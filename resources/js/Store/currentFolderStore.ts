@@ -1,23 +1,37 @@
-import { create } from 'zustand'
+import { StoreApi, UseBoundStore, create } from 'zustand'
+
+// auto generating selectors #https://docs.pmnd.rs/zustand/guides/auto-generating-selectors
+type WithSelectors<S> = S extends { getState: () => infer T } ? S & { use: { [K in keyof T]: () => T[K] } } : never;
+const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(_store: S) => {
+    let store = _store as WithSelectors<typeof _store>
+    store.use = {}
+    for (let k of Object.keys(store.getState())) {
+        ; (store.use as any)[k] = () => store((s) => s[k as keyof typeof s])
+    }
+    return store
+}
+
+
 
 type State = {
     folderId: string,
-    baseUrl: string
 }
 
 type Action = {
     setFolderId: (folderId: State['folderId']) => void,
-    setBaseUrl: (baseUrl: State['baseUrl']) => void,
 }
 
 
-const useCurrentFolderStore = create<State & Action>((set, get) => ({
+const useCurrentFolderStoreBase = create<State & Action>((set) => ({
     //state    
     folderId: '',
-    baseUrl: '',
-    // actions
+
     setFolderId: (folderId) => set(() => ({ folderId })),
-    setBaseUrl: (baseUrl) => set(() => ({ baseUrl })),
 }))
 
-export default useCurrentFolderStore
+const useCurrentFolderStore = createSelectors(useCurrentFolderStoreBase)
+
+export default useCurrentFolderStore;
+
+
+

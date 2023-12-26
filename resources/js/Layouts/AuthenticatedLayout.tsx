@@ -1,8 +1,9 @@
+import { Input, NavbarContent } from "@nextui-org/react";
+
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { NavbarContent, Input } from "@nextui-org/react";
-import { PropsWithChildren } from "react";
 import NavigationBar from "@/Components/NavigationBar";
-import SideBar from "@/Components/SideBar";
+import { PropsWithChildren } from "react";
+import SideBar from "@/Components/Sidebar";
 import ThemeSwitcher from "@/Components/ThemeSwitcher";
 import clsx from "clsx";
 import { usePage } from "@inertiajs/react";

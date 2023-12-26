@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreFolderRequest;
-use App\Http\Resources\FileResource;
 use App\Models\File;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response as HttpResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Resources\FileResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Requests\StoreFolderRequest;
+use Illuminate\Http\Response as HttpResponse;
 
 class MyDriveController extends Controller {
 
@@ -19,7 +19,7 @@ class MyDriveController extends Controller {
     // private method to retrive {$descendants, $ancenstors} for a $folder
     private function get_folder_data(File $folder) {
         $folder = FileResource::make($folder);
-        $descendants = FileResource::collection($folder->children()->orderBy('is_folder', 'desc')->orderBy('created_at', 'desc')->paginate());
+        $descendants = FileResource::collection($folder->children()->orderBy('is_folder', 'desc')->orderBy('created_at', 'asc')->paginate());
         $ancenstors = $folder->ancestors()->where("is_folder", 1)->hasParent()->get(["file_uuid", "name"]);
         return compact("folder", "descendants", "ancenstors");
     }

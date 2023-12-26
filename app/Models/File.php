@@ -74,16 +74,21 @@ class File extends Model {
     //     return $this->hasMany(File::class, "parent_id");
     // }
 
+    // if is_folder return number of items,  else file size
     public function file_size(): string {
-        // Define the units for file size
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        // Determine the appropriate unit and exponent based on the file size
-        $power = max(0, floor(log($this->size, 1024)));
+        if ($this->is_folder) {
+            return count($this->children) . " items";
+        } else {
+            // Define the units for file size
+            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            // Determine the appropriate unit and exponent based on the file size
+            $power = max(0, floor(log($this->size, 1024)));
 
-        // Calculate the size in the chosen unit and format it with number_format
-        $formatted_size = number_format($this->size / pow(1024, $power), 2, '.', ',');
+            // Calculate the size in the chosen unit and format it with number_format
+            $formatted_size = number_format($this->size / pow(1024, $power), 2, '.', ',');
 
-        return $formatted_size . ' ' . $units[$power];
+            return $formatted_size . ' ' . $units[$power];
+        }
     }
 
     public function getRouteKeyName(): string {

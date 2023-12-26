@@ -1,8 +1,9 @@
-import useCurrentFolderStore from "@/Store/currentFolderStore"
-import { useForm } from "@inertiajs/react"
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react"
 import { useEffect, useRef } from "react"
+
 import toast from "react-hot-toast"
+import useCurrentFolderStore from "@/Store/currentFolderStore"
+import { useForm } from "@inertiajs/react"
 
 type PropsType = {
     disclosure: {
@@ -17,19 +18,15 @@ type PropsType = {
 }
 
 export default function CreateFolder({ disclosure }: PropsType) {
-    const { folderId } = useCurrentFolderStore();
+    const folderId = useCurrentFolderStore.use.folderId();
     const { data, setData, post, errors, reset } = useForm({ name: '', parent_id: "" })
     const inputRef = useRef<HTMLInputElement>(null)
-
-    useEffect(() => {
-        setData("parent_id", folderId)
-    }, [folderId])
 
 
     function submit(e) {
         e.preventDefault()
         disclosure.onClose()
-
+        data.parent_id = folderId;
         post(route('folders.create'), {
             preserveScroll: true,
             onSuccess: () => {
