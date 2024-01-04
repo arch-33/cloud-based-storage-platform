@@ -3,14 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Models\File;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class StoreFolderRequest extends StoreFileRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
 
     /**
      * Get the validation rules that apply to the request.
@@ -34,8 +30,9 @@ class StoreFolderRequest extends StoreFileRequest {
     }
 
     public function messages() {
-        return [
-            'name.unique' => 'Folder ":input" already exists'
-        ];
+        return array_merge(
+            parent::messages(),
+            ['name.unique' => 'Folder ":input" already exists']
+        );
     }
 }

@@ -59,7 +59,12 @@ export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
 
                 <TableBody
                     items={elements.data}
-                    emptyContent={<span className="font-sans text-2xl">this directory is empty!</span>}
+                    emptyContent={
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <FolderIcon className="w-10 h-10" />
+                            <span className="font-sans text-2xl">This folder is empty!</span>
+                        </div>
+                    }
                 >
                     {(item: any) => (
                         <TableRow

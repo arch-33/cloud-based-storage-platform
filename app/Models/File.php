@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,24 +21,34 @@ class File extends Model {
      * The attributes that are mass assignable.
      */
     protected $fillable = ["name", "is_folder", "relative_path", "storage_path", "mime_type", "size"];
+
     /**
      * The attributes that should be hidden for serialization.
      *
      */
-
     protected $hidden = ['storage_path'];
+
+
+    public function scopeFolder(Builder $query): void {
+        $query->where('is_folder', 1);
+    }
+    public function scopeCreatedBy(Builder $query, $user_id): void {
+        $query->where("created_by", $user_id);
+    }
 
     public static function boot() {
         parent::boot();
 
         // Gates
         Gate::define('folders-only', function (User $user, File $folder) {
-            if ($folder->is_folder) return Response::allow();
+            if ($folder->is_folder)
+                return Response::allow();
             return Response::denyAsNotFound("folder not found!");
         });
 
         Gate::define('view-access', function (User $user, File $file) {
-            if ($file->created_by == $user->id) return Response::allow();
+            if ($file->created_by == $user->id)
+                return Response::allow();
             return Response::deny("access denied", 403);
         });
 
@@ -47,7 +58,8 @@ class File extends Model {
                 $file->created_by = Auth::id();
 
             // generating uuid for the file on create
-            $file->file_uuid = str_replace("-", "", (string)Str::uuid());;
+            $file->file_uuid = str_replace("-", "", (string) Str::uuid());
+            ;
         });
     }
 
@@ -69,10 +81,6 @@ class File extends Model {
             }
         );
     }
-
-    // public function children(): HasMany {
-    //     return $this->hasMany(File::class, "parent_id");
-    // }
 
     // if is_folder return number of items,  else file size
     public function file_size(): string {

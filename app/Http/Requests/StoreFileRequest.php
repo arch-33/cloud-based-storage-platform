@@ -13,6 +13,7 @@ class StoreFileRequest extends FormRequest {
 
     // storing the parent folder model
     public ?File $parent = null;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -40,8 +41,12 @@ class StoreFileRequest extends FormRequest {
     public function rules(): array {
         return [
             'parent_id' => [
+                "required",
                 Rule::exists(File::class, 'file_uuid')->where('is_folder', 1)->where('created_by', Auth::id())
             ]
         ];
+    }
+    public function messages(): array {
+        return ["parent_id.required" => ""];
     }
 }

@@ -17,7 +17,7 @@ type PropsType = {
     }
 }
 
-export default function CreateFolder({ disclosure }: PropsType) {
+export default function CreateFolderModal({ disclosure }: PropsType) {
     const folderId = useCurrentFolderStore.use.folderId();
     const { data, setData, post, errors, reset } = useForm({ name: '', parent_id: "" })
     const inputRef = useRef<HTMLInputElement>(null)
@@ -50,7 +50,7 @@ export default function CreateFolder({ disclosure }: PropsType) {
             <ModalContent>
                 {(onClose) => (
                     <form onSubmit={submit}>
-                        <ModalHeader className="flex justify-center py-4 text-x">Create New Folder</ModalHeader>
+                        <ModalHeader className="flex justify-center py-4 text-xl">Create New Folder</ModalHeader>
                         <ModalBody>
                             <Input
                                 ref={inputRef}

@@ -1,16 +1,18 @@
 import { Input, NavbarContent } from "@nextui-org/react";
+import { PropsWithChildren, ReactNode } from "react";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import NavigationBar from "@/Components/NavigationBar";
-import { PropsWithChildren } from "react";
 import SideBar from "@/Components/Sidebar";
 import ThemeSwitcher from "@/Components/ThemeSwitcher";
 import clsx from "clsx";
 import { usePage } from "@inertiajs/react";
 
-type PropsType = PropsWithChildren & {}
+type PropsType = PropsWithChildren & {
+	sidebarTopChild: ReactNode
+}
 
-export default function AuthenticatedLayout({ children }: PropsType) {
+export default function AuthenticatedLayout({ children,sidebarTopChild }: PropsType) {
 
 	const { user } = usePage().props.auth;
 	return (
@@ -44,7 +46,7 @@ export default function AuthenticatedLayout({ children }: PropsType) {
 					{children}
 				</main>
 
-				{user && <SideBar />}
+				{user && <SideBar>{sidebarTopChild}</SideBar>}
 
 			</div>
 

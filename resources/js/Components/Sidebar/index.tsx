@@ -1,14 +1,15 @@
 import { Divider } from "@nextui-org/react"
 import { FiHardDrive } from "react-icons/fi"
 import NewDropdown from "./NewDropdown"
+import { PropsWithChildren } from "react"
 import { RiGroupLine } from "react-icons/ri"
 import SideBarItem from "./SideBarItem"
 import { TrashIcon } from "@heroicons/react/24/outline"
 import { usePage } from "@inertiajs/react"
 
-type PropsType = {}
+type PropsType = PropsWithChildren & {}
 
-export default function SideBar({ }: PropsType) {
+export default function SideBar({ children }: PropsType) {
 
     const page_url = usePage().url
 
@@ -16,8 +17,8 @@ export default function SideBar({ }: PropsType) {
         <nav className="flex flex-col order-first w-64 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center content-center flex-initial h-16 px-4">
 
-                <NewDropdown />
-
+                {children}
+            
             </div>
             <Divider className="" />
             <ul className="flex flex-col flex-1 py-2 overflow-y-auto ps-2">
