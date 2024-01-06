@@ -77,7 +77,7 @@ class MyDriveController extends Controller {
     }
 
     public function storeFiles(StoreFileRequest $request) {
-        // $data = $request->validated();
+        $data = $request->validated();
 
         // $parent = $request->parent;
         // $user = Auth::user();

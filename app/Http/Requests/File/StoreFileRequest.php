@@ -41,12 +41,13 @@ class StoreFileRequest extends ParentIdRequest {
 		return array_merge(
 			parent::rules(),
 			[
-				"name" => [
+				"files.*" => [
 					'required',
-					Rule::unique(File::class, 'name')
-						->where('created_by', Auth::id())
-						->where('parent_id', $this->parent->id)
-						->whereNull('deleted_at')
+					'file',
+					// Rule::unique(File::class, 'name')
+					// 	->where('created_by', Auth::id())
+					// 	->where('parent_id', $this->parent->id)
+					// 	->whereNull('deleted_at')
 				]
 			]
 		);
