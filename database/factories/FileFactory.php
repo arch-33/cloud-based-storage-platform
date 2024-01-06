@@ -15,7 +15,7 @@ class FileFactory extends Factory {
      */
     public function definition(): array {
         return [
-            "name" => fake()->firstNameMale() . ".png",
+            "name" => fake()->slug(3) . "." . fake()->fileExtension(),
             "is_folder" => rand(0, 1),
         ];
     }

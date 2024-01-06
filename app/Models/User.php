@@ -45,9 +45,10 @@ class User extends Authenticatable {
 
         parent::boot();
 
+        
         // after create User
         static::created(function (User $user) {
-            // create root folder with file_name: user->email
+            // create root folder with name: user->email
             $file = new File();
             $file->name = $user->email;
             $file->is_folder = 1;

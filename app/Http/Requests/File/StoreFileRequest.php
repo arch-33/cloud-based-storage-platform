@@ -8,6 +8,29 @@ use Illuminate\Validation\Rule;
 
 class StoreFileRequest extends ParentIdRequest {
 
+
+	// /**
+	//  * Prepare the data for validation.
+	//  */
+	// protected function prepareForValidation() {
+	// 	$paths = array_filter($this->relative_paths ?? [], fn($f) => $f != null);
+
+	// 	$this->merge([
+	// 		'file_paths' => $paths,
+	// 		'folder_name' => $this->detectFolderName($paths)
+	// 	]);
+	// }
+
+	// /**
+	//  * Handle a passed validation attempt.
+	//  */
+	// protected function passedValidation() {
+	// 	$data = $this->validated();
+
+	// 	$this->replace([
+	// 		'file_tree' => $this->buildFileTree($this->file_paths, $data['files'])
+	// 	]);
+	// }
 	/**
 	 * Get the validation rules that apply to the request.
 	 *

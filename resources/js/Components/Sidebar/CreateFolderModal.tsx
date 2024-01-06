@@ -27,11 +27,14 @@ export default function CreateFolderModal({ disclosure }: PropsType) {
         e.preventDefault()
         disclosure.onClose()
         data.parent_id = folderId;
+
         post(route('folders.create'), {
             preserveScroll: true,
             onSuccess: () => {
                 disclosure.onClose()
-                toast.success(`The folder "${data.name}" was created successfully`, { position: "top-right", style: { padding: "1rem" } })
+                toast.success(`The folder "${data.name}" was created successfully`,
+                    { position: "top-right", style: { padding: "1rem" } }
+                );
                 reset(); // reset form
             },
             onError: () => inputRef.current?.focus(),

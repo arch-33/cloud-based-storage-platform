@@ -45,9 +45,12 @@ Route::controller(MyDriveController::class)
 
 		Route::post('/folders/create', "createFolder")
 			->name('folders.create');
+
+		Route::post('/files/upload', 'storeFiles')
+			->name('files.upload');
 	});
 
-	
+
 Route::middleware('auth')->group(function () {
 	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 	Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

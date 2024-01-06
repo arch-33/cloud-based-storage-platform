@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\File;
+
 
 use App\Models\File;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
-class StoreFolderRequest extends StoreFileRequest {
+class StoreFolderRequest extends ParentIdRequest {
 
     /**
      * Get the validation rules that apply to the request.
@@ -30,9 +31,9 @@ class StoreFolderRequest extends StoreFileRequest {
     }
 
     public function messages() {
-        return array_merge(
-            parent::messages(),
-            ['name.unique' => 'Folder ":input" already exists']
-        );
+        return [
+            'name.unique' => 'Folder ":input" already exists'
+        ];
     }
+
 }

@@ -22,9 +22,7 @@ const MyDrive = ({ folder, descendants, ancenstors }: PropsType) => {
 
 	useEffect(() => {
 		setFolderId(folder.data.uuid)
-		return () => {
-			setFolderId("")
-		}
+		return () => setFolderId("")
 	}, [])
 
 

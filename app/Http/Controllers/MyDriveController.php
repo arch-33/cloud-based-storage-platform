@@ -2,28 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\File\StoreFolderRequest;
+use App\Http\Requests\File\StoreFileRequest;
+use App\Http\Resources\FileResource;
 use App\Models\File;
+use App\Services\MyDriveService;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use App\Http\Requests\StoreFolderRequest;
-use MyDriveService;
 
 class MyDriveController extends Controller {
 
-    private MyDriveService $myDriveService;
+    function __construct(private MyDriveService $myDriveService) {}
 
     // GET : /my-drive
     public function index(): Response {
+
         $user_id = Auth::id();
 
         // get root folder
         $folder = File::createdBy($user_id)->whereIsRoot()->first();
 
-        $data = $this->myDriveService->getFolderData($folder);
+        $descendants = $this->myDriveService->getChildren($folder);
+        $ancenstors = $this->myDriveService->getAncenstors($folder);
+        $folder = FileResource::make($folder);
 
-        return Inertia::render("MyDrive", $data);
+        return Inertia::render("MyDrive",
+            compact("folder", "descendants", "ancenstors")
+        );
     }
 
 
@@ -32,7 +39,6 @@ class MyDriveController extends Controller {
 
         // check if current user can view folder
         Gate::authorize("view-access", $folder);
-
         // check if it's a folder
         Gate::authorize("folders-only", $folder);
 
@@ -40,13 +46,19 @@ class MyDriveController extends Controller {
         if ($folder->isRoot())
             return to_route("my-drive");
 
-        $data = $this->myDriveService->getFolderData($folder);
 
-        return Inertia::render("MyDrive", $data);
+        $descendants = $this->myDriveService->getChildren($folder);
+        $ancenstors = $this->myDriveService->getAncenstors($folder);
+        $folder = FileResource::make($folder);
+
+        return Inertia::render("MyDrive",
+            compact("folder", "descendants", "ancenstors")
+        );
     }
 
 
     public function createFolder(StoreFolderRequest $request) {
+
         // validate request
         $data = $request->validated();
 
@@ -59,6 +71,32 @@ class MyDriveController extends Controller {
         $file->name = $data['name'];
         $file->storage_path = "";
         $file->created_by = Auth::id();
+
+        // append it to $parent
         $parent->appendNode($file);
     }
+
+    public function storeFiles(StoreFileRequest $request) {
+        // $data = $request->validated();
+
+        // $parent = $request->parent;
+        // $user = Auth::user();
+
+        // $fileTree = $request->file_tree;
+
+        //     if (!$parent) {
+        //         $parent = $this->getRoot();
+        //     }
+
+        //     if (!empty($fileTree)) {
+        //         $this->saveFileTree($fileTree, $parent, $user);
+        //     } else {
+        //         foreach ($data['files'] as $file) {
+        //             /** @var \Illuminate\Http\UploadedFile $file */
+
+        //             $this->saveFile($file, $user, $parent);
+        //         }
+        //     }
+    }
+
 }
