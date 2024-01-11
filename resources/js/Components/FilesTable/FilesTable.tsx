@@ -22,6 +22,13 @@ const columnsClassNames = "dark:text-gray-50 dark:bg-gray-800 text-gray-800 bg-g
 const cellClassNames = "p-3.5 text-sm text-gray-700 dark:text-gray-200"
 
 
+const TableEmptyContent = () => (
+    <div className="flex flex-col items-center justify-center gap-2">
+        <FolderIcon className="w-10 h-10" />
+        <span className="font-sans text-2xl">This folder is empty!</span>
+    </div>
+);
+
 export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
 
     const OpenFolder = (folder: any) => {
@@ -57,21 +64,13 @@ export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
                     <TableColumn className={columnsClassNames + "min-w-[6rem]"}><EllipsisVerticalIcon className="w-6 h-6" /></TableColumn>
                 </TableHeader>
 
-                <TableBody
-                    items={elements.data}
-                    emptyContent={
-                        <div className="flex flex-col items-center justify-center gap-2">
-                            <FolderIcon className="w-10 h-10" />
-                            <span className="font-sans text-2xl">This folder is empty!</span>
-                        </div>
-                    }
-                >
+                <TableBody items={elements.data} emptyContent={<TableEmptyContent />} >
                     {(item: any) => (
-                        <TableRow
-                            key={item.key}
-                            onDoubleClick={(e) => OpenFolder(item)}
-                        >
-                            <TableCell className="p-3.5 text-sm text-gray-700 dark:text-gray-200" onDoubleClick={() => OpenFolder(item.uuid)}>
+                        <TableRow key={item.key} onDoubleClick={(e) => OpenFolder(item)} >
+
+                            <TableCell className="p-3.5 text-sm text-gray-700 dark:text-gray-200"
+                                onDoubleClick={() => OpenFolder(item)}
+                            >
                                 <span className="flex items-end font-medium gap-x-3">
                                     {item?.is_folder ? <FolderIcon className="w-5 h-5" /> : <DocumentIcon className="w-5 h-5" />}
                                     {item.name}
@@ -82,7 +81,7 @@ export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
                             <TableCell className={cellClassNames}>{item.created_at}</TableCell>
                             <TableCell className={cellClassNames}>{item.updated_at}</TableCell>
                             <TableCell className={cellClassNames}>
-                                <FileContextMenu file={item} />
+                                <FileContextMenu file={item} openFolder={OpenFolder}/>
                             </TableCell>
                         </TableRow>
                     )}

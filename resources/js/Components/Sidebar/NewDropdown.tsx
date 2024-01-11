@@ -5,11 +5,13 @@ import CreateFolderModal from "./CreateFolderModal";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import UploadFile from "./UploadFilesModal";
 import UploadFilesModal from "./UploadFilesModal";
+import UploadFoldersModal from "./UploadFoldersModal";
 
 export default function NewDropdown({ }) {
 
     const newFolderDisclosure = useDisclosure();
     const uploadFilesDisclosure = useDisclosure({})
+    const uploadFoldersDisclosure = useDisclosure({})
 
     const dropDownIconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -56,6 +58,7 @@ export default function NewDropdown({ }) {
                     <DropdownItem
                         key="upload-folder"
                         startContent={<RiFolderUploadLine className={dropDownIconClasses} />}
+                        onPress={() => uploadFoldersDisclosure.onOpen()}
                     >
                         Upload folder
                     </DropdownItem>
@@ -65,7 +68,9 @@ export default function NewDropdown({ }) {
             {/* create new folder modal  */}
             <CreateFolderModal disclosure={newFolderDisclosure} />
             {/* upload files modal */}
-            <UploadFilesModal disclosure={uploadFilesDisclosure} />
+            <UploadFoldersModal disclosure={uploadFoldersDisclosure} />
+
+            {/* upload folders modal */}
         </>
     )
 }

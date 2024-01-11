@@ -1,11 +1,8 @@
 <?php
 
-use App\Models\File;
-use App\Models\User;
-use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Request;
 use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FoldersController;
@@ -40,6 +37,9 @@ Route::controller(MyDriveController::class)
 		Route::get('/', "index")
 			->name('my-drive');
 
+		Route::post('/folders/upload', 'storeFolders')
+			->name('folders.upload');
+
 		Route::get('/folders/{folder}', "folders")
 			->name('folders.show');
 
@@ -57,10 +57,5 @@ Route::middleware('auth')->group(function () {
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::post('/upload', function (Request $request) {
-	$file = $request->file('file');
-	$filename = $file->store('uploads'); // Store in the 'uploads' directory
-	dd($filename);
-});
 
 require __DIR__ . '/auth.php';

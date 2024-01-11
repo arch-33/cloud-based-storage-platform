@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateFolderRequest;
 use App\Http\Requests\File\StoreFolderRequest;
 use App\Http\Requests\File\StoreFileRequest;
 use App\Http\Resources\FileResource;
 use App\Models\File;
 use App\Services\MyDriveService;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +17,9 @@ use Illuminate\Support\Facades\Gate;
 
 class MyDriveController extends Controller {
 
-    function __construct(private MyDriveService $myDriveService) {}
+    function __construct(private MyDriveService $myDriveService) {
+
+    }
 
     // GET : /my-drive
     public function index(): Response {
@@ -28,9 +33,7 @@ class MyDriveController extends Controller {
         $ancenstors = $this->myDriveService->getAncenstors($folder);
         $folder = FileResource::make($folder);
 
-        return Inertia::render("MyDrive",
-            compact("folder", "descendants", "ancenstors")
-        );
+        return Inertia::render("MyDrive", compact("folder", "descendants", "ancenstors"));
     }
 
 
@@ -57,7 +60,7 @@ class MyDriveController extends Controller {
     }
 
 
-    public function createFolder(StoreFolderRequest $request) {
+    public function createFolder(CreateFolderRequest $request) {
 
         // validate request
         $data = $request->validated();
@@ -69,34 +72,34 @@ class MyDriveController extends Controller {
         $file = new File();
         $file->is_folder = 1;
         $file->name = $data['name'];
-        $file->storage_path = "";
+        $file->storage_path = $parent->storage_path . "/" . $parent->name;
+        $file->relative_path = $parent->relative_path . "/" . $parent->name;
         $file->created_by = Auth::id();
 
         // append it to $parent
         $parent->appendNode($file);
     }
 
+    // upload files
     public function storeFiles(StoreFileRequest $request) {
         $data = $request->validated();
+        $parent = $request->parent;
 
-        // $parent = $request->parent;
-        // $user = Auth::user();
-
-        // $fileTree = $request->file_tree;
-
-        //     if (!$parent) {
-        //         $parent = $this->getRoot();
-        //     }
-
-        //     if (!empty($fileTree)) {
-        //         $this->saveFileTree($fileTree, $parent, $user);
-        //     } else {
-        //         foreach ($data['files'] as $file) {
-        //             /** @var \Illuminate\Http\UploadedFile $file */
-
-        //             $this->saveFile($file, $user, $parent);
-        //         }
-        //     }
+        foreach ($data['files'] as $file) {
+            /** @var \Illuminate\Http\UploadedFile $file */
+            $this->myDriveService->saveFile($file, $parent);
+        }
     }
 
+    public function storeFolders(StoreFolderRequest $request) {
+        $request->validated();
+        $parent = $request->parent;
+        $fileTree = $request->file_tree;
+
+        if (!empty($fileTree)) {
+            $this->myDriveService->saveFileTree($fileTree, $parent);
+        }
+    }
+
+    public function destroy(Request $request) {}
 }

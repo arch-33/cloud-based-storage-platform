@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class File extends Model {
 
-    use HasFactory,NodeTrait;
+    use HasFactory, NodeTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -121,6 +121,9 @@ class File extends Model {
      */
     public function scopeFolder(Builder $query): void {
         $query->where('is_folder', 1);
+    }
+    public function scopeFile(Builder $query): void {
+        $query->where('is_folder', 0);
     }
     public function scopeCreatedBy(Builder $query, $user_id): void {
         $query->where("created_by", $user_id);

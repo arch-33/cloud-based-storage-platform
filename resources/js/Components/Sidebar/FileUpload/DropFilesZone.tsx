@@ -3,7 +3,6 @@ import { ChangeEvent, DragEvent, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import clsx from "clsx";
 
-
 type PropsType = {
 	selectedFiles: {
 		get: any[],

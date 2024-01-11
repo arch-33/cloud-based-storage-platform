@@ -7,30 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class StoreFileRequest extends ParentIdRequest {
-
-
-	// /**
-	//  * Prepare the data for validation.
-	//  */
-	// protected function prepareForValidation() {
-	// 	$paths = array_filter($this->relative_paths ?? [], fn($f) => $f != null);
-
-	// 	$this->merge([
-	// 		'file_paths' => $paths,
-	// 		'folder_name' => $this->detectFolderName($paths)
-	// 	]);
-	// }
-
-	// /**
-	//  * Handle a passed validation attempt.
-	//  */
-	// protected function passedValidation() {
-	// 	$data = $this->validated();
-
-	// 	$this->replace([
-	// 		'file_tree' => $this->buildFileTree($this->file_paths, $data['files'])
-	// 	]);
-	// }
 	/**
 	 * Get the validation rules that apply to the request.
 	 *
@@ -41,20 +17,37 @@ class StoreFileRequest extends ParentIdRequest {
 		return array_merge(
 			parent::rules(),
 			[
+				'files' => 'required|array|min:1',
 				"files.*" => [
 					'required',
 					'file',
-					// Rule::unique(File::class, 'name')
-					// 	->where('created_by', Auth::id())
-					// 	->where('parent_id', $this->parent->id)
-					// 	->whereNull('deleted_at')
-				]
+					function ($attribute, $value, $fail) {
+						/** @var $value \Illuminate\Http\UploadedFile */
+
+						$file = File::createdBy(Auth::id())
+							->where('name', $value->getClientOriginalName())
+							->file()
+							->where('parent_id', $this->parent->id)
+							->whereNull('deleted_at')
+							->exists();
+
+						if ($file) {
+							$fail('File "' . $value->getClientOriginalName() . '" already exists.');
+						}
+					}
+				],
 			]
 		);
 	}
-	public function messages() {
-		return [
-			'name.unique' => '":input" already exists in current folder!'
-		];
+
+	public function messages(): array {
+		return array_merge(
+			parent::messages(),
+			[
+				'files.required' => 'You need to provide at least 1 file',
+				'files.array' => 'You need to provide at least 1 file',
+				'files.min' => 'You need to provide at least 1 file',
+			]
+		);
 	}
 }

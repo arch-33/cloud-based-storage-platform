@@ -2,10 +2,11 @@ import { ArrowDownTrayIcon, DocumentMagnifyingGlassIcon, EllipsisVerticalIcon, F
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react';
 
 interface IFileContextMenuProps {
-    file: any
+    file: any,
+    openFolder: (folder: any) => void
 }
 
-export default function FileContextMenu({ file }: IFileContextMenuProps) {
+export default function FileContextMenu({ file, openFolder }: IFileContextMenuProps) {
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0 w-6 h-6";
 
     return (
@@ -18,19 +19,24 @@ export default function FileContextMenu({ file }: IFileContextMenuProps) {
                 </DropdownTrigger>
                 <DropdownMenu variant="faded">
                     <DropdownSection showDivider>
-                        <DropdownItem
-                            startContent={
-                                file.is_folder ? <FolderOpenIcon className={iconClasses} /> : <DocumentMagnifyingGlassIcon className={iconClasses} />
-                            }>
-                            View
-                        </DropdownItem>
+                        {file.is_folder &&
+                            <DropdownItem
+                                startContent={<FolderOpenIcon className={iconClasses} />}
+                                onClick={() => openFolder(file)}
+                            >
+                                Open
+                            </DropdownItem>
+                        }
+
                         <DropdownItem startContent={<ArrowDownTrayIcon className={iconClasses} />}>
-                            Download
+                            Download {file.is_folder ? "as Zip" : "file"}
                         </DropdownItem>
+                        
                         <DropdownItem startContent={<ShareIcon className={iconClasses} />}>
                             Share
                         </DropdownItem>
                     </DropdownSection>
+                    
                     <DropdownSection >
                         <DropdownItem startContent={<TrashIcon className={iconClasses} />} className="text-danger" color='danger'>
                             Move to Trash

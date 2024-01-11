@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { FilesTable } from "@/Components/FilesTable/FilesTable";
+import { Head } from "@inertiajs/react";
 import { NavBreadcrumbs } from "@/Components/FilesTable/NavBreadcrumbs";
 import NewDropdown from "@/Components/Sidebar/NewDropdown";
 import { PageProps } from "@/types";
@@ -30,6 +31,7 @@ const MyDrive = ({ folder, descendants, ancenstors }: PropsType) => {
 		<AuthenticatedLayout
 			sidebarTopChild={<NewDropdown />}
 		>
+			<Head title="My-drive"/>
 			<div className="flex flex-col gap-8 px-4 pt-6">
 
 
