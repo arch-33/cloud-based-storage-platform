@@ -1,26 +1,20 @@
-import { DocumentIcon, EllipsisVerticalIcon, FolderIcon } from "@heroicons/react/24/outline";
-import { Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { ArrowDownTrayIcon, DocumentIcon, EllipsisVerticalIcon, FolderIcon, ShareIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Button, ButtonGroup, Modal, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from "@nextui-org/react";
 
 import FileContextMenu from "./FileContextMenu";
-import { router } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
+import clsx from "clsx";
+import useCurrentFolderStore from "@/Store/currentFolderStore";
+import { DeletePromptDisclosure } from "./DeletePromptDisclosure";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { deleteRequest, openFolderRequest } from "@/helpers";
+import { useConfirm } from "react-confirm-hook";
+import ConfirmDelete from "../Alert/ConfirmDelete";
 
-interface IFilesTableProps {
-    baseUrl: string,
-    selectionProps: { get: any, set: any, },
-    elements: {
-        [name: string]: any,
-        meta: { [name: string]: any, links: any[] }
-    },
-}
-const tableClassNames = {
-    table: "min-w-full",
-    th: "first:min-w-0 first:p-y-0 bg-gray-50 dark:bg-gray-800 align-middle whitespace-nowrap outline-none p-x-3.5 !w-0 border-b-2 border-b-gray-200 dark:border-b-gray-600",
-    tbody: "divide-y divide-gray-200 dark:divide-gray-600",
-}
+
 const columnsClassNames = "dark:text-gray-50 dark:bg-gray-800 text-gray-800 bg-gray-50 p-3.5 text-md text-start font-semibold min-w-[10rem]"
 const cellClassNames = "p-3.5 text-sm text-gray-700 dark:text-gray-200"
-
 
 const TableEmptyContent = () => (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -29,13 +23,16 @@ const TableEmptyContent = () => (
     </div>
 );
 
-export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
+interface PropsType {
+    baseUrl: string,
+    selectionProps: { get: any, set: any, },
+    elements: {
+        [name: string]: any,
+        meta: { [name: string]: any, links: any[] }
+    },
+}
 
-    const OpenFolder = (folder: any) => {
-        if (folder?.is_folder) {
-            router.visit(route("folders.show", { folder: folder.uuid }))
-        }
-    }
+export function FilesTable({ selectionProps, elements }: PropsType) {
 
     const onPaginate = (page: number) => {
         const currentRoute = route().current()?.toString() ?? ""
@@ -43,17 +40,21 @@ export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
         router.visit(route(currentRoute, { ...routeParams, page }))
     }
 
-
     return (
         <>
+
             <Table
                 color="primary"
                 radius="none"
                 selectionMode="multiple"
                 removeWrapper
-                classNames={tableClassNames}
                 selectedKeys={selectionProps.get}
                 onSelectionChange={selectionProps.set}
+                classNames={{
+                    table: "min-w-full bg-white dark:bg-gray-700 rounded-md shadow ",
+                    th: "first:min-w-0 first:p-y-0 bg-gray-50 dark:bg-gray-800 align-middle whitespace-nowrap outline-none p-x-3.5 !w-0 border-b-2 border-b-gray-200 dark:border-b-gray-600",
+                    tbody: "divide-y divide-gray-200 dark:divide-gray-600",
+                }}
             >
                 <TableHeader className="bg-gray-50 dark:bg-gray-800">
                     <TableColumn className={columnsClassNames}>File Name</TableColumn>
@@ -61,15 +62,16 @@ export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
                     <TableColumn className={columnsClassNames}>Owner</TableColumn>
                     <TableColumn className={columnsClassNames}>Created</TableColumn>
                     <TableColumn className={columnsClassNames}>Updated</TableColumn>
-                    <TableColumn className={columnsClassNames + "min-w-[6rem]"}><EllipsisVerticalIcon className="w-6 h-6" /></TableColumn>
+                    <TableColumn className={columnsClassNames + "min-w-[6rem]"}>
+                        <EllipsisVerticalIcon className="w-6 h-6" />
+                    </TableColumn>
                 </TableHeader>
 
                 <TableBody items={elements.data} emptyContent={<TableEmptyContent />} >
                     {(item: any) => (
-                        <TableRow key={item.key} onDoubleClick={(e) => OpenFolder(item)} >
-
+                        <TableRow key={item.uuid} onDoubleClick={(e) => openFolderRequest(item)} >
                             <TableCell className="p-3.5 text-sm text-gray-700 dark:text-gray-200"
-                                onDoubleClick={() => OpenFolder(item)}
+                                onDoubleClick={() => openFolderRequest(item)}
                             >
                                 <span className="flex items-end font-medium gap-x-3">
                                     {item?.is_folder ? <FolderIcon className="w-5 h-5" /> : <DocumentIcon className="w-5 h-5" />}
@@ -81,7 +83,7 @@ export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
                             <TableCell className={cellClassNames}>{item.created_at}</TableCell>
                             <TableCell className={cellClassNames}>{item.updated_at}</TableCell>
                             <TableCell className={cellClassNames}>
-                                <FileContextMenu file={item} openFolder={OpenFolder}/>
+                                <FileContextMenu file={item} />
                             </TableCell>
                         </TableRow>
                     )}
@@ -108,9 +110,7 @@ export function FilesTable({ selectionProps, elements }: IFilesTableProps) {
                         onChange={onPaginate}
                     />
                 </div> : <></>}
-            <span className="w-[30%] text-small text-default-400">
-                {selectionProps.get === "all" ? "All items selected" : `${selectionProps.get.size} selected`}
-            </span>
+
         </>
     );
 }

@@ -8,7 +8,7 @@ import { StrictMode } from 'react';
 import { NextUIProvider } from '@nextui-org/react';
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { Toaster } from 'react-hot-toast';
-
+import { ConfirmProvider } from 'react-confirm-hook';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -21,8 +21,10 @@ createInertiaApp({
             <StrictMode>
                 <NextUIProvider>
                     <NextThemesProvider attribute="class" defaultTheme="light">
-                        <App {...props} />
-                        <Toaster/>
+                        <ConfirmProvider>
+                            <App {...props} />
+                        </ConfirmProvider>
+                        <Toaster />
                     </NextThemesProvider>
                 </NextUIProvider>
             </StrictMode>

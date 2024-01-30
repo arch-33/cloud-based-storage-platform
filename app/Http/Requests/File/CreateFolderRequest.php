@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\File;
 
 use App\Http\Requests\File\ParentIdRequest;
 use App\Models\File;

@@ -19,8 +19,9 @@ class DatabaseSeeder extends Seeder {
         // adding 4 files to $user's root folder
 
         // // getting the root folder of $user
-        //$root_folder = File::where("created_by", $user->id)->whereIsRoot()->first();
+        // $root_folder = File::where("created_by", $user->id)->whereIsRoot()->first();
         // // create 4 files in root_folder
+        
         // File::factory(4)->create([
         //     "created_by" => $user->id,
         //     "parent_id" => $root_folder->id,

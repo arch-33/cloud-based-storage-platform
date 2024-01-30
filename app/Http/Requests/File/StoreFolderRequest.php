@@ -4,7 +4,6 @@ namespace App\Http\Requests\File;
 
 
 use App\Models\File;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
 class StoreFolderRequest extends ParentIdRequest {

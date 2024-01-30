@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Route;
-use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\FoldersController;
 use App\Http\Controllers\MyDriveController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\FileShareController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,35 +20,49 @@ use App\Http\Controllers\ProfileController;
  */
 
 
-/*Home
+/* Home
 if not authentecated return welcome page else redirect to my-drive
 */
-
 Route::get('/', HomeController::class);
 
 
-// my-drive 
+// my-drive
 Route::controller(MyDriveController::class)
 	->middleware(["auth", "verified"])
 	->prefix("my-drive")
 	->group(function () {
 
-		Route::get('/', "index")
-			->name('my-drive');
+		Route::get('/', "index")->name('my-drive');
 
-		Route::post('/folders/upload', 'storeFolders')
-			->name('folders.upload');
+		Route::post('/folders/create', "createFolder")->name('folders.create');
 
-		Route::get('/folders/{folder}', "folders")
-			->name('folders.show');
+		Route::post('/folders/upload', 'storeFolders')->name('folders.upload');
 
-		Route::post('/folders/create', "createFolder")
-			->name('folders.create');
+		Route::get('/folders/{folder}', "folders")->name('folders.show');
 
-		Route::post('/files/upload', 'storeFiles')
-			->name('files.upload');
+		Route::post('/files/upload', 'storeFiles')->name('files.upload');
+
+		Route::delete('/files', 'destroy')->name('files.delete');
+		
+		Route::post('/download', 'download')->name('files.download');
+
 	});
 
+
+// Route::get('/download/', DownloadController::class);
+
+
+// share
+Route::controller(FileShareController::class)
+	->middleware(["auth", "verified"])
+	->prefix("share")
+	->group(function () {
+
+		// list shared with me
+		// Route::get('/', "index")->name('my-drive');
+
+		// share files
+	});
 
 Route::middleware('auth')->group(function () {
 	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

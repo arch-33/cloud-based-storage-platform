@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable, HasUuids, MustVerifyEmail;
@@ -45,15 +45,15 @@ class User extends Authenticatable {
 
         parent::boot();
 
-        
+
         // after create User
         static::created(function (User $user) {
-            
+
             // create root folder with name: user->email
             $file = new File();
             $file->name = $user->email;
             $file->is_folder = 1;
-            $file->storage_path = "";
+            $file->storage_path = "uploads/" . $user->email;
             $file->relative_path = "";
             $file->created_by = $user->id;
             $file->makeRoot()->save();

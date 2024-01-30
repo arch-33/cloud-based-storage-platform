@@ -17,25 +17,11 @@ class FileActionRequest extends ParentIdRequest {
         return array_merge(parent::rules(), [
             'selected_all' => 'nullable|boolean',
             'selected_ids.*' => [
-                "uuid",
+                "string",
                 // check if uuid exists in files
-                Rule::exists('files', 'uuid'),
-
+                Rule::exists('files', 'file_uuid'),
                 // check authorization
-                // function ($attribute, $id, $fail) {
-                //     $file = File::query()->leftJoin('file_shares', 'file_shares.file_id', 'files.id')
-                //         ->where('files.uuid', $id)
-                //         ->where(function ($query) {
-                //             /** @var $query \Illuminate\Database\Query\Builder */
-                //             $query->where('files.created_by', Auth::id())
-                //                 ->orWhere('file_shares.user_id', Auth::id());
-                //         })
-                //         ->first();
-
-                //     if (!$file) {
-                //         $fail('Invalid ID "' . $id . '"');
-                //     }
-                // }
+                
             ]
         ]);
     }

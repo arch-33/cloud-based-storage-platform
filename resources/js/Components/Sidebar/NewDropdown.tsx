@@ -3,9 +3,8 @@ import { RiFileUploadLine, RiFolderAddLine, RiFolderUploadLine } from "react-ico
 
 import CreateFolderModal from "./CreateFolderModal";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import UploadFile from "./UploadFilesModal";
-import UploadFilesModal from "./UploadFilesModal";
-import UploadFoldersModal from "./UploadFoldersModal";
+import UploadFilesModal from "../uploadModals/UploadFilesModal";
+import UploadFoldersModal from "../uploadModals/UploadFoldersModal";
 
 export default function NewDropdown({ }) {
 
@@ -68,9 +67,10 @@ export default function NewDropdown({ }) {
             {/* create new folder modal  */}
             <CreateFolderModal disclosure={newFolderDisclosure} />
             {/* upload files modal */}
-            <UploadFoldersModal disclosure={uploadFoldersDisclosure} />
+            <UploadFilesModal disclosure={uploadFilesDisclosure} />
 
             {/* upload folders modal */}
+            <UploadFoldersModal disclosure={uploadFoldersDisclosure} />
         </>
     )
 }

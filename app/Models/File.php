@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NodeTrait;
 use Illuminate\Auth\Access\Response;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class File extends Model {
 
-    use HasFactory, NodeTrait;
+    use HasFactory, NodeTrait, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
