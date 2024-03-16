@@ -1,6 +1,6 @@
 import { Divider } from "@nextui-org/react"
 import { FiHardDrive } from "react-icons/fi"
-import NewDropdown from "./NewDropdown"
+import NewDropdown from "./NewDocumentsDropdown"
 import { PropsWithChildren } from "react"
 import { RiGroupLine } from "react-icons/ri"
 import SideBarItem from "./SideBarItem"
@@ -27,7 +27,7 @@ export default function SideBar({ children }: PropsType) {
                 <SideBarItem
                     title="My Drive"
                     icon={<FiHardDrive className="w-6 h-6" />}
-                    path="/my-drive"
+                    path={route("my-drive")}
                     isActive={page_url.startsWith("/my-drive")}
                 />
 
@@ -50,7 +50,7 @@ export default function SideBar({ children }: PropsType) {
                     className="hover:bg-red-400 hover:text-white group"
                     title="Trash"
                     icon={<TrashIcon className="w-6 h-6 group-hover:text-white" />}
-                    path="/profile"
+                    path={route("trash")}
                     isActive={page_url.startsWith("/trash")}
                 />
 

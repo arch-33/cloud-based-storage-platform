@@ -16,16 +16,15 @@ class FileResource extends JsonResource {
             "id" => $this->id,
             "uuid" => $this->file_uuid,
             "name" => $this->name,
-            "is_folder" => (bool)$this->is_folder,
+            "is_folder" => (bool) $this->is_folder,
             "parent_id" => $this->parent_id,
             "mime_type" => $this->mime_type,
             "size" => $this->fileSize(),
-            'owner' => $this->owner,
-            "children" => $this->children,
+            'owner' => $this->owner(),
             "created_at" => $this->created_at->diffForHumans(),
             "updated_at" => $this->updated_at->diffForHumans(),
-            "created_by" => $this->creator,
-            "deleted_at" => $this->deleted_at,
+            "deleted_at" => $this->deleted_at ? $this->deleted_at->diffForHumans() : null,
+            "created_by" => $this->whenLoaded('creator', null, $this->created_by),
         ];
     }
 }

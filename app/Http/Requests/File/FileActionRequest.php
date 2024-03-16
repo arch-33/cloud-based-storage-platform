@@ -20,8 +20,7 @@ class FileActionRequest extends ParentIdRequest {
                 "string",
                 // check if uuid exists in files
                 Rule::exists('files', 'file_uuid'),
-                // check authorization
-                
+                // check authorization   
             ]
         ]);
     }

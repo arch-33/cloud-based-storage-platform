@@ -1,6 +1,6 @@
 import { DocumentIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@nextui-org/react";
-import { useId } from "react";
+import { useEffect, useId, useMemo } from "react";
 import prettyBytes from 'pretty-bytes';
 
 
@@ -19,18 +19,20 @@ export default function ListUploadables({ selectedFiles }: PropsType) {
     const removeOne = (index: number) => () => {
         selectedFiles.set(selectedFiles.get.filter((item, i) => i !== index))
     };
-
+    const relative_paths = useMemo(() => [...selectedFiles.get].map(f => f.webkitRelativePath), [selectedFiles]);
 
 
     return (
         <div className="w-full h-full col-span-12 pt-1 pb-5 md:col-span-6">
-            <h3 className="text-lg font-semibold">selected Files</h3>
-            {selectedFiles.get.length > 0 && (
-                <button className="text-xs underline" onClick={removeAll}>
-                    Remove all
-                </button>
-            )}
+            <span className="flex justify-between">
+                <h3 className="text-lg font-semibold">selected Files</h3>
+                {selectedFiles.get.length > 0 && (
 
+                    <Button color="danger" variant="bordered" className="text-xs" onClick={removeAll}>
+                        Remove all
+                    </Button>
+                )}
+            </span>
             {selectedFiles.get.length > 0 && (
                 <div className="overflow-y-auto max-h-[23rem] pr-1">
 
@@ -44,8 +46,12 @@ export default function ListUploadables({ selectedFiles }: PropsType) {
                                         <p className="max-w-[80%] truncate text-zinc-700 dark:text-zinc-50">
                                             {file.name}
                                         </p>
+
                                         <span className="text-zinc-500">({prettyBytes(file.size)})</span>
                                     </span>
+                                    <p className="max-w-[80%] truncate text-zinc-700 dark:text-zinc-50 text-xs font-semibold px-1">
+                                        {relative_paths[i]}
+                                    </p>
                                 </div>
                             </div>
 

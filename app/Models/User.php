@@ -54,7 +54,6 @@ class User extends Authenticatable {
             $file->name = $user->email;
             $file->is_folder = 1;
             $file->storage_path = "uploads/" . $user->email;
-            $file->relative_path = "";
             $file->created_by = $user->id;
             $file->makeRoot()->save();
         });

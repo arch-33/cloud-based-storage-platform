@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NodeTrait;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,19 +43,20 @@ class File extends Model {
     public static function boot() {
         parent::boot();
 
-        // Gates
-        Gate::define('view-access', function (User $user, File $file) {
-            if ($file->created_by == $user->id)
-                return Response::allow();
+        // // Gates
+        // Gate::define('view-access', function (User $user, File $file) {
+        //     if ($file->created_by == $user->id)
+        //         return Response::allow();
 
-            return Response::deny("access denied", 403);
-        });
+        //     return Response::deny("access denied", 403);
+        // });
 
-        Gate::define('folders-only', function (User $user, File $folder) {
-            if ($folder->is_folder)
-                return Response::allow();
-            return Response::denyAsNotFound("folder not found!");
-        });
+        // Gate::define('folders-only', function (User $user, File $folder) {
+        //     if ($folder->is_folder)
+        //         return Response::allow();
+        //     return Response::denyAsNotFound("folder not found!");
+        // });
+
 
         // Events
 
@@ -82,21 +83,16 @@ class File extends Model {
     }
 
     /**
-     * Attributes
-     */
-    public function owner(): Attribute {
-        return Attribute::make(
-            get: function (mixed $value, array $attributes) {
-                if (Auth::check() && $attributes['created_by'] == Auth::id())
-                    return "me";
-
-                return $this->creator->first_name . " " . $this->creator->last_name;
-            }
-        );
-    }
-    /**
      * Helper methods
      */
+
+    public function owner(): string {
+        if (Auth::check() && $this->created_by == Auth::id())
+            return "Me";
+
+        $creator = $this->loadMissing("creator")->creator;
+        return $creator->first_name . " " . $creator->last_name;
+    }
 
     // if is_folder return number of items,  else file size
     public function fileSize(): string {

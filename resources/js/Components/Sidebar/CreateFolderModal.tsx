@@ -1,5 +1,5 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react"
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 
 import toast from "react-hot-toast"
 import useCurrentFolderStore from "@/Store/currentFolderStore"

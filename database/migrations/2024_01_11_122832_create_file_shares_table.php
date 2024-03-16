@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     /**
@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignUuid('shared_by')->constrained('users', "id");
-            $table->email('shared_with')->constrained('users', "email");
-            $table->foreignUuid('file_id')->constrained('files')->nullable();
+            $table->foreignUuid('file_id')->constrained('files');
+            $table->foreignUuid('shared_with')->constrained('users', "id")->nullable();
 
             $table->string('token', 16)->unique()->index();
             $table->boolean('is_public')->default(false);

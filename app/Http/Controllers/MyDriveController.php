@@ -5,18 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\File;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Services\MyDriveService;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
 use App\Http\Resources\FileResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\File\StoreFileRequest;
 use App\Http\Requests\File\FileActionRequest;
-use App\Http\Requests\File\FilesDeleteRequest;
 use App\Http\Requests\File\StoreFolderRequest;
 use App\Http\Requests\File\CreateFolderRequest;
 
@@ -30,7 +24,11 @@ class MyDriveController extends Controller {
         $user_id = Auth::id();
 
         // get root folder
-        $folder = File::createdBy($user_id)->whereIsRoot()->first();
+        $folder = File::without(["children", "ancestors", "creator"])
+            // ->where("file_uuid", "3258dd534fb64676a170b2463b10a54a")
+            ->createdBy($user_id)
+            ->whereIsRoot()
+            ->first();
 
         $descendants = $this->myDriveService->getChildren($folder);
         $ancenstors = $this->myDriveService->getAncenstors($folder);
@@ -43,10 +41,15 @@ class MyDriveController extends Controller {
     // GET : /my-drive/folders/{folder_uuid}
     public function folders(File $folder) {
 
+        $user_id = Auth::id();
+        
         // check if current user can view folder
-        Gate::authorize("view-access", $folder);
+        if (!$folder->created_by == $user_id)
+            return Inertia::render('Error', ['status' => 403]);
+
         // check if it's a folder
-        Gate::authorize("folders-only", $folder);
+        if (!$folder->is_folder)
+            return Inertia::render('Error', ['status' => 401]);
 
         // if root folder redirect to /
         if ($folder->isRoot())

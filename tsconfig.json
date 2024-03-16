@@ -14,5 +14,5 @@
             "@/*": ["./resources/js/*"]
         }
     },
-    "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx", "resources/js/**/*.d.ts"]
+    "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx", "resources/js/**/*.d.ts", "resources/js/Components/FileManager/Actions/.trash/Delete.tsx", "resources/js/Components/FileManager/Actions/.trash/Download.tsx", "resources/js/Components/FileManager/Actions/.trash/MoveToTrash.tsx", "resources/js/Components/FileManager/Actions/.trash/Open.tsx", "resources/js/Components/FileManager/Actions/.trash/Restore.tsx", "resources/js/Components/FileManager/Actions/.trash/Share.tsx"]
 }

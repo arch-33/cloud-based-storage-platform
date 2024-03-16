@@ -19,7 +19,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class MyDriveService {
 
 	public function getChildren(File $folder) {
-		$children = $folder->children()
+		$children = $folder->loadMissing("children")
+			->children()
 			->orderBy('is_folder', 'desc')
 			->orderBy('created_at', 'asc')
 			->paginate(30);
@@ -28,16 +29,20 @@ class MyDriveService {
 	}
 
 	public function getAncenstors(File $file) {
-		return $file->ancestors()->folder()->hasParent()->get(["file_uuid", "name"]);
+		return $file->loadMissing("ancestors")
+			->ancestors()
+			->folder()
+			->hasParent()
+			->get(["file_uuid AS uuid", "name"])
+			->toArray();
 	}
 
 	public function createFolder($folderName, $parent) {
 		$folder = new File();
 		$folder->is_folder = 1;
-		$folder->name = utf8_encode($folderName);
+		$folder->name = mb_convert_encoding($folderName, "UTF-8");
 		$folder->created_by = Auth::id();
 		$folder->storage_path = implode("/", [$parent->storage_path, $parent->name, $folder->name]);
-		$folder->relative_path = $parent->isRoot() ? "/" : $parent->relative_path;
 
 		// append it to $parent
 		$parent->appendNode($folder);
@@ -51,11 +56,10 @@ class MyDriveService {
 		$path = Storage::disk("local")->putFile($parentPath, $file);
 		$fileModel = new File();
 		$fileModel->is_folder = false;
-		$fileModel->name = utf8_encode($file->getClientOriginalName());
+		$fileModel->name = mb_convert_encoding($file->getClientOriginalName(), "UTF-8");
 		$fileModel->mime_type = $file->getMimeType();
 		$fileModel->size = $file->getSize();
 		$fileModel->storage_path = $path;
-		$fileModel->relative_path = $parent->isRoot() ? "/" : $parent->relative_path;
 		$fileModel->created_by = Auth::id();
 		$parent->appendNode($fileModel);
 	}
@@ -106,7 +110,6 @@ class MyDriveService {
 
 				// finish the zip stream
 				$zip->finish();
-
 			}, $parent->name, [
 				"Content-Type" => "application/zip",
 				"filename" => $parent->name . ".zip"
@@ -136,8 +139,6 @@ class MyDriveService {
 					"Content-Type" => "application/zip",
 					"filename" => $file->name . ".zip"
 				]);
-
-
 			} else {
 				return response()->streamDownload(function () use ($file) {
 					echo Storage::disk("local")->get($file->storage_path);
@@ -173,17 +174,13 @@ class MyDriveService {
 					}
 				}
 
-
-
 				// finish the zip stream
 				$zip->finish();
-
 			}, $parent->name, [
 				"Content-Type" => "application/zip",
 				"filename" => $parent->name . ".zip"
 			]);
 		}
-
 	}
 
 	private function addFolderToZip($folder, ZipStream $zip, $pathInZip = "") {
@@ -198,12 +195,8 @@ class MyDriveService {
 						$pathInZip . $child->name,
 						Storage::disk("local")->path($child->storage_path)
 					);
-
 				}
 			}
 		}
 	}
-
-
-
 }

@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TrashController;
 use App\Http\Controllers\MyDriveController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DownloadController;
@@ -23,10 +24,11 @@ use App\Http\Controllers\FileShareController;
 /* Home
 if not authentecated return welcome page else redirect to my-drive
 */
-Route::get('/', HomeController::class);
+Route::get('/', HomeController::class)->name('welcome');
 
 
 // my-drive
+
 Route::controller(MyDriveController::class)
 	->middleware(["auth", "verified"])
 	->prefix("my-drive")
@@ -43,14 +45,19 @@ Route::controller(MyDriveController::class)
 		Route::post('/files/upload', 'storeFiles')->name('files.upload');
 
 		Route::delete('/files', 'destroy')->name('files.delete');
-		
 		Route::post('/download', 'download')->name('files.download');
 
 	});
 
-
-// Route::get('/download/', DownloadController::class);
-
+// trash
+Route::controller(TrashController::class)
+	->middleware(["auth", "verified"])
+	->prefix("trash")
+	->group(function () {
+		Route::get('/', "index")->name('trash');
+		Route::get('/folders/{folder}', "folders")->name('trash.show');
+		Route::delete('/files', 'destroy')->name('trash.delete');
+	});
 
 // share
 Route::controller(FileShareController::class)
@@ -60,7 +67,7 @@ Route::controller(FileShareController::class)
 
 		// list shared with me
 		// Route::get('/', "index")->name('my-drive');
-
+	
 		// share files
 	});
 

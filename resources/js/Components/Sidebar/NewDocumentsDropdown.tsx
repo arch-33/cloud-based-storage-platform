@@ -3,10 +3,10 @@ import { RiFileUploadLine, RiFolderAddLine, RiFolderUploadLine } from "react-ico
 
 import CreateFolderModal from "./CreateFolderModal";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import UploadFilesModal from "../uploadModals/UploadFilesModal";
-import UploadFoldersModal from "../uploadModals/UploadFoldersModal";
+import UploadFilesModal from "../FileManager/Modals/UploadFiles";
+import UploadFoldersModal from "../FileManager/Modals/UploadFolders";
 
-export default function NewDropdown({ }) {
+export default function NewDocumentsDropdown({ }) {
 
     const newFolderDisclosure = useDisclosure();
     const uploadFilesDisclosure = useDisclosure({})

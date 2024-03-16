@@ -1,11 +1,9 @@
-import { ArrowDownTrayIcon, DocumentMagnifyingGlassIcon, EllipsisVerticalIcon, FolderOpenIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, EllipsisVerticalIcon, FolderOpenIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react';
 
-import useCurrentFolderStore from '@/Store/currentFolderStore';
-import { useForm, usePage } from '@inertiajs/react';
-import axios from 'axios';
-import { saveAs } from "file-saver";
 import { openFolderRequest } from '@/helpers';
+import useMoveToTrashAction from '../FileManager/Actions/callbacks/MoveToTrash';
+import useDownloadAction from '../FileManager/Actions/useDownloadAction';
 
 interface IFileContextMenuProps {
     file: any,
@@ -13,82 +11,9 @@ interface IFileContextMenuProps {
 
 export default function FileContextMenu({ file }: IFileContextMenuProps) {
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0 w-6 h-6";
-    const folderId = useCurrentFolderStore.use.folderId()
-
-    const deleteForm = useForm({
-    })
-    const downloadForm = useForm<{
-        selected_all: boolean,
-        selected_ids: string[],
-        parent_id: string
-    }>({
-        selected_all: false,
-        selected_ids: [],
-        parent_id: ""
-    })
-    const page = usePage()
-
-    const onDownload = () => {
-        const data = {
-            parent_id: folderId,
-            selected_all: false,
-            selected_ids: [file.uuid],
-        }
-        axios.post(route("files.download"), data, { responseType: "blob" }).then(({ data, headers }) => {
-            saveAs(data, headers.get("filename"));
-        }).catch(err => console.log(err))
-
-
-
-        /* 
-        console.log(page);
-        httpPost(route("files.download"), {
-            parent_id: folderId,
-            selected_all: false,
-            selected_ids: [file.uuid],
-        })
     
-        fetch(route('files.download', {
-            parent_id: folderId,
-            selected_all: false,
-            selected_ids: [file.uuid],
-        }))
-            .then((res) => res.blob())
-            .then((blob) => {
-                // const a = document.createElement('a');
-                // a.download = "res.filename";
-                // a.href = res.url;
-                // a.click();
-    
-                // const file = window.URL.createObjectURL(blob)
-                // window.location.assign(file)
-            }) */
-
-        /* 
-        
-                fetch(route('files.download', {
-                    method
-                }))
-                    /* .then((res) => res.blob())
-                    .then((res) => {
-                        console.log(res);
-        
-                        // const a = document.createElement('a');
-                        // a.download = "res.filename";
-                        // a.href = res.url;
-                        // a.click();
-        
-                        // const file = window.URL.createObjectURL(blob)
-                        // window.location.assign(file)
-                    }) */
-
-        /* downloadForm.data.parent_id = folderId;
-        downloadForm.data.selected_all = false;
-        downloadForm.data.selected_ids = [file.uuid];
-        downloadForm.post(route("files.download"), {
-            preserveState: true,
-        }); */
-    }
+    const onMoveToTrash = useMoveToTrashAction(file);
+    const onDownload = useDownloadAction(file);
 
 
     return (
@@ -110,7 +35,10 @@ export default function FileContextMenu({ file }: IFileContextMenuProps) {
                             </DropdownItem>
                         }
 
-                        <DropdownItem onPress={onDownload} startContent={<ArrowDownTrayIcon className={iconClasses} />}>
+                        <DropdownItem
+                            onPress={onDownload}
+                            startContent={<ArrowDownTrayIcon className={iconClasses} />}
+                        >
                             Download {file.is_folder ? "as Zip" : "file"}
                         </DropdownItem>
 
@@ -120,7 +48,12 @@ export default function FileContextMenu({ file }: IFileContextMenuProps) {
                     </DropdownSection>
 
                     <DropdownSection >
-                        <DropdownItem startContent={<TrashIcon className={iconClasses} />} className="text-danger" color='danger'>
+                        <DropdownItem
+                            startContent={<TrashIcon className={iconClasses} />}
+                            className="text-danger"
+                            color='danger'
+                            onPress={onMoveToTrash}
+                        >
                             Move to Trash
                         </DropdownItem>
                     </DropdownSection>
