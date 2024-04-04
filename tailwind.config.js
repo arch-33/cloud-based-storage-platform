@@ -14,15 +14,15 @@ export default {
 	darkMode: "class",
 
 	theme: {
-		container: {
+		/* container: {
 			center: true,
 			padding: "2rem",
 			screens: {
 				"2xl": "1400px",
 			},
-		},
+		}, */
 		extend: {
-			colors: {
+			/* colors: {
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
 				ring: "hsl(var(--ring))",
@@ -78,7 +78,7 @@ export default {
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
-			},
+			}, */
 		},
 	},
 

@@ -1,4 +1,4 @@
-export interface User {
+export interface UserType {
     id: number;
     first_name: string;
     last_name: string;
@@ -21,7 +21,7 @@ export interface FileDataType {
     deleted_at?: null;
 }
 
-export type FileActions = "Share" | "Download" | "Move To Trash" | "Delete" | "Restore" /*from trash*/;
+export type FileActions = "Open"/* folder */ | "Share" | "Download" | "Move To Trash" | "Delete" | "Restore" /*from trash*/;
 
 export type FileManagerRoutes = {
     home: string,
@@ -33,6 +33,6 @@ export type FileManagerRoutes = {
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     auth: {
-        user: User;
+        user: UserType;
     };
 };

@@ -13,6 +13,13 @@
 }
 
 @layer base {
+	.border-color {
+		@apply border-gray-200 dark:border-gray-700;
+	}
+}
+
+/* 
+@layer base {
 	:root {
 		--background: 0 0% 100%;
 		--foreground: 222.2 47.4% 11.2%;
@@ -89,3 +96,4 @@
 		font-feature-settings: "rlig" 1, "calt" 1;
 	}
 }
+ */

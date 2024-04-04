@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import { Head } from "@inertiajs/react";
 import { FileDataType, PageProps } from "@/types";
-import FileManager from "@/Components/FileManager/FileManager";
 
 type PropsType = PageProps & {
 	folder: { data: FileDataType, },// current folder data
@@ -17,7 +16,8 @@ const Trash = ({ folder, descendants, ancenstors }: PropsType) => {
 	return (
 		<Fragment>
 			<Head title="My-drive: Trashed Files" />
-			<FileManager
+			Trash
+			{/* <FileManager
 				folder={folder.data}
 				ancenstors={ancenstors}
 				descendants={descendants}
@@ -34,7 +34,7 @@ const Trash = ({ folder, descendants, ancenstors }: PropsType) => {
 					restore: "trash.restore"
 				}}
 				children={null}
-			/>
+			/> */}
 		</Fragment>
 	)
 }

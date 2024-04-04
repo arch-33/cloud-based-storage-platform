@@ -13,25 +13,24 @@ type PropsType = PageProps & {
 	ancenstors: { uuid: string, name: string }[], // parents list for cureent folder
 }
 
-export default function MyDrive({ folder, descendants, ancenstors }: PropsType) {
-
+export default function SharedWithMe({ folder, descendants, ancenstors }: PropsType) {
 	return (
 		<FileManagerProvider
 			folder={folder.data}
 			descendants={descendants.data}
 			ancenstors={ancenstors}
 			can={{
-				upload: true,
-				fileActions: ["Share", "Download", "Move To Trash"],
+				upload: false,
+				fileActions: ["Download", "Move To Trash"],
 			}}
 			routes={{
 				home: {
-					label: "My Drive",
+					label: "Shared With Me",
 					icon: Home,
-					routeName: "my-drive.index",
+					routeName: "sharedw-me.index",
 				},
 				nested: {
-					routeName: "my-drive.folders.show",
+					routeName: "sharedw-me.show",
 					params: "folder"
 				},
 				current: folder.data.parent_id ? { name: folder.data.name } : undefined
