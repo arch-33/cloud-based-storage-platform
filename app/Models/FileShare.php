@@ -5,7 +5,10 @@ namespace App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,8 +27,7 @@ class FileShare extends Model {
         'file_id',
         'token',
         'is_public',
-        'permission',
-        'expire_in'
+        'permission'
     ];
 
     /**
@@ -62,20 +64,31 @@ class FileShare extends Model {
     /**
      * Relationships
      */
-    public function shared_by(): BelongsTo {
+    public function file(): HasOne {
+        return $this->hasOne(File::class, "file_uuid", "file_id");
+    }
+    
+    public function created_by(): BelongsTo {
         return $this->belongsTo(User::class, "shared_by");
     }
     public function shared_with(): BelongsTo {
         return $this->belongsTo(User::class, "shared_with", "email");
     }
+
     /**
      * Attributes
      */
-    public function link(): Attribute {
-        return Attribute::make(
-            get: function (mixed $value, array $attributes) {
-                return url("/share/{$attributes['token']}");
-            }
-        );
+    // public function link(): Attribute {
+    //     return Attribute::make(
+    //         get: function (mixed $value, array $attributes) {
+    //             return url("/share/{$attributes['token']}");
+    //         }
+    //     );
+    // }
+    /**
+     * Scoops
+     */
+    public function scopeSharedBy(Builder $query, $user_id): void {
+        $query->where("shared_by", $user_id);
     }
 }

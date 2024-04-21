@@ -10,9 +10,10 @@ type Config = {
 	descendants: FileDataType[]; //current folder's children
 	ancenstors: { uuid: string; name: string }[]; //parents list {uuid , name} for cureent folder
 	routes: { //routes config for current Page
+		routeNamePrefix: string,
 		home: { label: string; routeName: string; icon: LucideIcon };
 		nested: { routeName: string; params: string };
-		current?: { name: string; }
+		current?: { name: string; },
 	};
 	can: {
 		upload: boolean;

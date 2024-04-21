@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\File;
+namespace App\Http\Requests\MyDrive;
 
-use App\Http\Requests\File\ParentIdRequest;
 use App\Models\File;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\File\WithParentIdRequest;
 
-class CreateFolderRequest extends ParentIdRequest {
+class CreateFolderRequest extends WithParentIdRequest {
 
     /**
      * Get the validation rules that apply to the request.
@@ -23,7 +23,7 @@ class CreateFolderRequest extends ParentIdRequest {
                     Rule::unique(File::class, 'name')
                         ->where('is_folder', 1)
                         ->where('created_by', Auth::id())
-                        ->where('parent_id', $this->parent->id)
+                        ->where('parent_id', $this->parentFolder->id)
                         ->whereNull('deleted_at')
                 ]
             ]

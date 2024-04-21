@@ -1,11 +1,11 @@
 import { useForm } from "@inertiajs/react";
 import { Button, Card, CardBody, CardHeader, Divider, Listbox, ListboxItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
-import { RiUploadLine } from "react-icons/ri";
 import { FormEvent, useCallback, useMemo } from "react";
 import { CircleX, FolderOpen } from "lucide-react";
 import toast from "react-hot-toast";
 import { countBy, filter } from 'lodash';
 import DropZone from "@/components/ui/dropZone";
+import { Upload } from "lucide-react";
 
 
 type PropsType = {
@@ -18,11 +18,11 @@ type PropsType = {
 	currentFolderID: string
 }
 
+type Inputs = { files: File[], relative_paths: string[], parent_id: string }
+
 export default function UploadFoldersModal({ disclosure, currentFolderID }: PropsType) {
 
-	const uploadForm = useForm<{ files: File[], parent_id: string, relative_paths: string[] }>({
-		files: [], parent_id: "", relative_paths: [],
-	});
+	const uploadForm = useForm<Inputs>({ files: [], relative_paths: [], parent_id: currentFolderID });
 
 	const removeAll = useCallback(() => uploadForm.setData("files", []), [])
 
@@ -40,11 +40,11 @@ export default function UploadFoldersModal({ disclosure, currentFolderID }: Prop
 		return Object.entries(tmp).map(([key, value]) => ({ folder: key, children: value }));
 	}, [uploadForm.data.files])
 
+
 	const submit = (ev: FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
-
-		uploadForm.setData("parent_id", currentFolderID);
-		uploadForm.setData("relative_paths", uploadForm.data.files.map(f => f.webkitRelativePath))
+		
+		uploadForm.data.relative_paths = uploadForm.data.files.map(f => f.webkitRelativePath)
 		
 		uploadForm.post(route('my-drive.folders.upload'), {
 			forceFormData: true,
@@ -85,8 +85,8 @@ export default function UploadFoldersModal({ disclosure, currentFolderID }: Prop
 		>
 			<ModalContent>
 				{(onClose) => (
-					<form>
-						<ModalHeader className="flex justify-center py-4 text-xl"> Upload </ModalHeader>
+					<form onSubmit={submit}>
+						<ModalHeader className="flex justify-center py-4 text-xl"> Upload Folders</ModalHeader>
 
 						<ModalBody className="flex items-center justify-center w-full">
 							<DropZone
@@ -122,7 +122,7 @@ export default function UploadFoldersModal({ disclosure, currentFolderID }: Prop
 						</ModalBody>
 						<ModalFooter className="gap-6">
 							<Button color="danger" variant="flat" onPress={onClose}>Cancel</Button>
-							<Button color="primary" type="submit" startContent={<RiUploadLine className="w-5 h-5" />} onPress={submit}>
+							<Button color="primary" type="submit" startContent={<Upload className="w-5 h-5" />}>
 								Upload
 							</Button>
 						</ModalFooter>

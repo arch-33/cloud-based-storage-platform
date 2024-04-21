@@ -5,6 +5,10 @@ import clsx from 'clsx';
 import { Download, EllipsisVertical, FolderOpen, LucideIcon, RotateCcw, Share, Trash } from 'lucide-react';
 import { PressEvent } from "@react-types/shared";
 import { useFileManagerConfig, useFileManagerState } from '../fileManagerContext';
+import { router } from '@inertiajs/react';
+import useOpenFolderAction from '../selectionActions/Actions/useOpenFolder';
+import useMoveToTrash from '../selectionActions/Actions/useMoveToTrash';
+import useDownload from '../selectionActions/Actions/useDownload';
 
 type PropsType = {
 	file: FileDataType,
@@ -21,10 +25,30 @@ export default function FileContextMenu({ file }: PropsType) {
 
 	const id = useId();
 	const { can } = useFileManagerConfig();
-	const { selectedKeys, setSelectedKeys } = useFileManagerState();
+	const { selectedKeys } = useFileManagerState();
 
-	const onAction = useCallback((actionName: string) => (ev: PressEvent) => {
-		alert(actionName)
+
+	const onOpenFolder = useOpenFolderAction();
+	const onMoveToTrash = useMoveToTrash();
+	const onDownload = useDownload();
+
+	const onAction = useCallback((actionName: FileActions) => (ev: PressEvent) => {
+
+		switch (actionName) {
+			case "Open":
+				onOpenFolder(file);
+				break;
+			case "Move To Trash":
+				onMoveToTrash(file);
+				break;
+			case "Download":
+				onDownload(file);
+				break;
+				
+			default:
+				console.log(selectedKeys);
+				break;
+		}
 	}, [file])
 
 	const actionsList: ActionItemType[] = useMemo(() => [

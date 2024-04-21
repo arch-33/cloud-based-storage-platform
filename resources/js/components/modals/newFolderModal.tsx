@@ -29,8 +29,6 @@ export default function NewFolderModal({ disclosure, currentFolderID }: PropsTyp
 			return;
 		}
 
-		disclosure.onClose();
-
 		post(route('my-drive.folders.new'), {
 			preserveScroll: true,
 			onSuccess: () => {
@@ -87,7 +85,7 @@ export default function NewFolderModal({ disclosure, currentFolderID }: PropsTyp
 							<Button color="danger" variant="ghost" onPress={onClose}>
 								Cancel
 							</Button>
-							<Button color="primary" className="flex-1" type="submit" onPress={onSubmit}>
+							<Button color="primary" className="flex-1" type="submit" >
 								Create
 							</Button>
 						</ModalFooter>

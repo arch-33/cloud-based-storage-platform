@@ -3,17 +3,29 @@ import { FileDataType, PageProps } from "@/types";
 import { Home } from "lucide-react";
 import FileManager from "@/filesManager";
 import { FileManagerProvider } from "@/filesManager/fileManagerContext";
+import { useEffect } from "react";
 
 type PropsType = PageProps & {
-	folder: { data: FileDataType, },// current folder data
-	descendants: { // current folder's children with pagination
+	folder?: { data: FileDataType, },// current folder data
+	elements: any;
+
+	descendants?: { // current folder's children with pagination
 		data: FileDataType[];
 		meta: { [name: string]: any, links: any[] }
 	},
-	ancenstors: { uuid: string, name: string }[], // parents list for cureent folder
+	ancenstors?: { uuid: string, name: string }[], // parents list for cureent folder
 }
 
-export default function MyDrive({ folder, descendants, ancenstors }: PropsType) {
+export default function SharedByMe({ elements, folder, descendants, ancenstors }: PropsType) {
+
+	useEffect(() => {
+		console.log(elements);
+
+	}, []);
+
+	return (
+		<div>ddd</div>
+	)
 	return (
 		<FileManagerProvider
 			folder={folder.data}

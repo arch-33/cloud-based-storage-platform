@@ -14,15 +14,12 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignUuid('shared_by')->constrained('users', "id");
-            $table->foreignUuid('file_id')->constrained('files');
-            $table->foreignUuid('shared_with')->constrained('users', "id")->nullable();
+            $table->foreignUuid('file_id')->constrained('files', 'file_uuid');
+            $table->foreignUuid('shared_with')->nullable()->constrained('users', "id");
 
-            $table->string('token', 16)->unique()->index();
+            $table->string('token')->index();
             $table->boolean('is_public')->default(false);
             $table->enum('permission', ['view', 'edit'])->default('view');
-
-            $table->integer('expire_in')->nullable();
-
             $table->timestamps();
         });
     }

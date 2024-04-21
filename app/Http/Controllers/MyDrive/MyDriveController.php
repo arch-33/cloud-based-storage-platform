@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MyDrive;
 
 use App\Models\File;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Services\MyDriveService;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\FileResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -63,18 +64,6 @@ class MyDriveController extends Controller {
         return Inertia::render("MyDrive",
             compact("folder", "descendants", "ancenstors")
         );
-    }
-
-
-    public function createFolder(CreateFolderRequest $request) {
-
-        // validate request
-        $data = $request->validated();
-
-        // parent folder model
-        $parent = $request->parent;
-
-        $this->myDriveService->createFolder($data['name'], $parent);
     }
 
     // upload files

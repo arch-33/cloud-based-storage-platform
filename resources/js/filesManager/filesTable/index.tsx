@@ -6,12 +6,13 @@ import { If, Then, Else } from "react-if";
 import FileContextMenu from "./contextMenu";
 import { useFileManagerConfig, useFileManagerState } from "../fileManagerContext";
 import { capitalize } from "lodash";
+import useOpenFolderAction from "../selectionActions/Actions/useOpenFolder";
 
 type PropsType = {}
 
 export default function FilesTable({ }: PropsType) {
 
-	const { descendants, filesTable } = useFileManagerConfig();
+	const { descendants, filesTable, routes } = useFileManagerConfig();
 	const { selectedKeys, setSelectedKeys, visibleColumns, searchFilterValue } = useFileManagerState();
 	const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
 
@@ -50,10 +51,10 @@ export default function FilesTable({ }: PropsType) {
 		switch (columnKey) {
 			case "name":
 				return (
-					<span className="flex items-end font-medium gap-x-3">
+					<span className="flex items-center font-medium gap-x-3">
 						<If condition={file.is_folder}>
-							<Then><Folder className="w-5 h-5" /></Then>
-							<Else><File className="w-5 h-5" /></Else>
+							<Then><Folder className="w-5 h-5 min-w-5 min-h-5 " /></Then>
+							<Else><File className="w-5 h-5 min-w-5 min-h-5" /></Else>
 						</If>
 						{cellValue}
 					</span>
@@ -68,9 +69,7 @@ export default function FilesTable({ }: PropsType) {
 	}, []);
 
 
-	const onOpenFolder = (file: FileDataType) => () => {
-		alert("go to folder: " + file.uuid)
-	}
+	const onOpenFolder = useOpenFolderAction();
 
 	return (
 		<Table
@@ -113,8 +112,8 @@ export default function FilesTable({ }: PropsType) {
 			>
 				{(item) => (
 					<TableRow
-						key={item.id}
-						onDoubleClick={onOpenFolder(item)}
+						key={item.uuid}
+						onDoubleClick={()=>onOpenFolder(item)}
 					>
 						{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
 					</TableRow>

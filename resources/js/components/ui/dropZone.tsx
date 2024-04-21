@@ -13,7 +13,7 @@ export default function DropZone({ uploadType, setFiles }: PropsType) {
 	const [isDragOver, setIsDragOver] = useState(false);
 
 	const inputProps = useMemo(() => {
-		return uploadType === "folders" ? { directory: "", mozdirectory: "", webkitdirectory: "" } : { multiple: true }
+		return uploadType === "folders" ? { directory: "", mozdirectory: "", webkitdirectory: ""} : { multiple: true }
 	}, [uploadType])
 
 	const filterFiles = (files: FileList) => {
@@ -22,7 +22,7 @@ export default function DropZone({ uploadType, setFiles }: PropsType) {
 
 		for (let index = 0; index < files.length; index++) {
 			// Check if it's a folder
-			if (!files[index].type) { // Not a file
+			if (!(files[index].type || files[index].size)) { // Not a file
 				// No file type detected, likely a folder
 				errMessage = 'Folders are not allowed. Please select only files.'
 			} else {
@@ -45,7 +45,7 @@ export default function DropZone({ uploadType, setFiles }: PropsType) {
 		onDragLeave(ev);
 		const files = ev.dataTransfer.files;
 		if (!files.length) { return; }
-		
+
 		if (uploadType === "files") {
 			const { acceptedfiles, errMessage } = filterFiles(ev.dataTransfer.files);
 			setFiles([...acceptedfiles])
