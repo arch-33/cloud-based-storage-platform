@@ -20,54 +20,25 @@ class NewShareController extends Controller {
     /**
      * Handle the incoming request.
      */
-
-    /* 
-        "selected_all" => false
-        "is_public" => false
-        "email" => "arch@gmail.com"
-        "permission" => "view"
-        "selected_ids" => array:2 [
-            0 => "9a09e4a97b884384afe25a887a7dbc48"
-            1 => "12e625d7140a424e8ed970ee48516bb6"
-        ]
-
-        "selected_all" => false
-        "is_public" => true
-        "email" => "arch@gmail.com"
-        "permission" => "view"
-        "selected_ids" => array:2 [
-            0 => "9a09e4a97b884384afe25a887a7dbc48"
-            1 => "12e625d7140a424e8ed970ee48516bb6"
-        ]
-     */
     public function __invoke(NewShareRequest $request) {
-        $data = $request->validated();
+        $validated_data = $request->validated();
         $sharedBy = Auth::user();
 
         $selectedFiles = null;
 
-        if ($data["selected_all"]) {
+        if ($validated_data["selected_all"]) {
             $selectedFiles = $request->parentFolder->children;
         } else {
-            $selectedFiles = File::whereIn("file_uuid", $data["selected_ids"])
+            $selectedFiles = File::whereIn("file_uuid", $validated_data["selected_ids"])
                 ->where("parent_id", $request->parentFolder->id)
                 ->get();
         }
 
 
         $shareToken = Str::uuid()->toString();
-
-        if ($data["is_public"]) {
-
-            $data = [];
-
+        $data = [];
+        if ($validated_data["is_public"]) {
             foreach ($selectedFiles as $file) {
-                // $table->foreignUuid('shared_by')->constrained('users', "id");
-                // $table->foreignUuid('file_id')->constrained('files', 'file_uuid');
-                // $table->foreignUuid('shared_with')->constrained('users', "id")->nullable();
-                // $table->string('token', 16)->unique()->index();
-                // $table->boolean('is_public')->default(false);
-                // $table->enum('permission', ['view', 'edit'])->default('view');
                 $data[] = [
                     'shared_by' => $sharedBy->id,
                     'file_id' => $file->file_uuid,
@@ -77,61 +48,30 @@ class NewShareController extends Controller {
                     'updated_at' => Carbon::now(),
                 ];
             }
+        } else {
+            $recipient = User::query()->where('email', $validated_data["email"])->first();
+            if (!$recipient) {
+                return redirect()->back();
+            }
+            $data = [];
+            foreach ($selectedFiles as $file) {
+                $data[] = [
 
+                    'shared_by' => $sharedBy->id,
+                    'shared_with' => $recipient->id,
+                    'file_id' => $file->file_uuid,
+                    'token' => $shareToken,
+                    "is_public" => false,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ];
+            }
+        }
+        if (count($data))
             FileShare::insert($data);
 
-            // $fileShare = FileShare::create([
-            //     'shared_by' => Auth::id(),
-            //     'shared_with' => null,
-            //     'file_id',
-            //     'token' => $shareToken,
-            //     'is_public',
-            //     'permission',
-            //     'expire_in'
-            // ]);
-        }
-
-
-        /* $user = User::query()->where('email', $data["email"])->first();
-
-        if (!$user) {
-            return redirect()->back();
-        }
-
-        if ($all) {
-            $files = $parent->children;
-        } else {
-            $files = File::find($ids);
-        }
-
-        $data = [];
-        $ids = Arr::pluck($files, 'id');
-        $existingFileIds = FileShare::query()
-            ->whereIn('file_id', $ids)
-            ->where('user_id', $user->id)
-            ->get()
-            ->keyBy('file_id');
-
-        foreach ($files as $file) {
-            if ($existingFileIds->has($file->id)) {
-                continue;
-            }
-            $data[] = [
-                'file_id' => $file->id,
-                'user_id' => $user->id,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ];
-        }
-        FileShare::insert($data);
-
-        Mail::to($user)->send(new ShareFilesMail($user, Auth::user(), $files));
-
-        return redirect()->back(); */
-
-
         return [
-            "file_url" => $shareToken
+            "shared_token" => $shareToken
         ];
     }
     /* 

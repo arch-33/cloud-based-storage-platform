@@ -16,21 +16,11 @@ class ListSharingController extends Controller {
      */
     public function __invoke(Request $request) {
         $user = Auth::user();
-        $elements = FileShare::with(["file", "created_by","shared_with"])
+
+        $elements = FileShare::with(["file", "created_by", "shared_with"])
             ->SharedBy($user->id)
             ->get();
         $elements = FileShareResource::collection($elements);
-        // $files = File::query()
-        //     ->select('files.*')
-        //     ->join('file_shares', 'file_shares.file_id', 'files.id')
-        //     ->where('files.created_by', Auth::id())
-        //     ->orderBy('file_shares.created_at', 'desc')
-        //     ->orderBy('files.id', 'desc')->get();
-
-
-        // $files = FileShare::with("files")->get();
-
-        // $files = FileShare::SharedBy($user->id)->get();
 
         return Inertia::render("SharedByMe", compact("elements"));
     }
